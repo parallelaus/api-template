@@ -16,6 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
+    "isolatedModules": true,
 
     "moduleResolution": "NodeNext",
     "module": "NodeNext",

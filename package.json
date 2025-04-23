@@ -1,4 +1,27 @@
 {
   "name": "api-template",
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@4.9.1",
+  "scripts": {
+    "clean": "rimraf dist & rimraf coverage",
+    "build": "rimraf dist & tsc",
+    "build:dev": "rimraf dist & tsc --watch",
+    "start": "node -r dotenv/config dist",
+    "start:dev": "env-cmd -f ./.env.dev nodemon dist"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
+    "env-cmd": "^10.1.0",
+    "eslint": "^9.25.1",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0"
+  }
 }

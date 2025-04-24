@@ -4,7 +4,13 @@
 import express, { Router } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+
 import { Environment } from '../environment'
+
+import ai from './ai'
+import { log } from './middleware/log'
+import { error } from './middleware/error'
+import { zodError } from './middleware/zod-error'
 
 const router = Router()
 
@@ -14,7 +20,7 @@ router.get('/health-check', function (_req, res) {
 })
 
 // Bind the /v1 API Endpoints
-// router.use('/v1', v1)
+router.use('/ai', ai)
 
 // Disallow robots
 router.use('/robots.txt', function (_req, res) {
@@ -33,5 +39,12 @@ api.use(helmet())
 api.use(express.json())
 api.use(express.urlencoded({ extended: true }))
 
+api.use(log)
+
 api.use(router)
+
+// Error Handler
+api.use(zodError)
+api.use(error)
+
 export default api

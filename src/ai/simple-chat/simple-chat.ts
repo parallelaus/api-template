@@ -1,24 +1,39 @@
-import { MessageContent } from '@langchain/core/messages'
 import simpleChatGraph from './graph'
 import { prompt } from './nodes'
-import { type AIChat } from '../../types/aiChat'
+import { type AIChat } from '../../types/ai-chat'
+import { MessagesAnnotation } from '@langchain/langgraph'
+import { IterableReadableStream } from '@langchain/core/utils/stream'
 
-export async function simpleChat(chat: AIChat): Promise<MessageContent> {
+/**
+ * Handles a simple chat request (no memory, single question/answer)
+ * @param chat The chat object
+ * @returns The response from the LLM
+ */
+export async function simpleChat(
+  chat: AIChat,
+): Promise<typeof MessagesAnnotation.State> {
   // Get the prompt from the prompt template
   const messages = await prompt.invoke({
-    user_input: chat.messages[0]!.request,
+    user_input: chat.messages[0]!.content,
   })
 
   // Invoke the graph chain with the prompt
-  const result = await simpleChatGraph.invoke(messages)
+  return await simpleChatGraph.invoke(messages, {
+    configurable: { thread_id: chat.id! },
+  })
+}
 
-  // Return the last message in the response
-  if (
-    !result.messages ||
-    result.messages.length === 0 ||
-    result.messages[result.messages.length - 1]!.getType() !== 'ai'
-  ) {
-    throw new Error('No response from LLM')
-  }
-  return result.messages[result.messages.length - 1]!.content
+export async function simpleChatStream(
+  chat: AIChat,
+): Promise<IterableReadableStream<typeof MessagesAnnotation.State>> {
+  // Get the prompt from the prompt template
+  const messages = await prompt.invoke({
+    user_input: chat.messages[0]!.content,
+  })
+
+  // Invoke the graph chain with the prompt
+  return await simpleChatGraph.stream(messages, {
+    configurable: { thread_id: chat.id! },
+    streamMode: 'values',
+  })
 }

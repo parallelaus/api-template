@@ -25,5 +25,6 @@ export async function callModel(
 ): Promise<typeof MessagesAnnotation.State> {
   const response = await llm.invoke(state.messages)
   // Append the messages to the state
+  // This is a shortcut provided by the MessagesAnnotation
   return { messages: [response] }
 }
